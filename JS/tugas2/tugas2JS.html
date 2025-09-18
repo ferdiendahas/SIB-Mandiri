@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas2JS</title>
+</head>
+<body>
+    <h1>Input Data Pegawai</h1>
+    <form id="pegawaiForm">
+        <label>Nama Pegawai :</label>
+        <input type="text" id="namaPegawai" required><br><br>
+
+        <label>Umur :</label>
+        <input type="number" id="umur" required><br><br>
+
+        <label>Jabatan :</label>
+        <select id="jabatan">
+            <option value="manajer">Manajer</option>
+            <option value="asisten manajer">Asisten Manajer</option>
+            <option value="staff">Staff</option>
+        </select><br><br>
+
+        <label>Status :</label>
+        <select id="status">
+            <option value="menikah">Menikah</option>
+            <option value="belumMenikah">Belum Menikah</option>
+        </select><br><br>
+
+        <button type="button" onclick="ambilData()">Kirim</button>
+    </form>
+    <br>
+    <div id="output"></div>
+
+    <script>
+       function ambilData() {
+        let namaPegawai = document.getElementById("namaPegawai").value;
+        let umur = parseInt(document.getElementById("umur").value);
+        let jabatan = document.getElementById("jabatan").value;
+        let status = document.getElementById("status").value;
+        let gajiPokok;
+        if (jabatan === "manajer"){
+            gajiPokok = 15000000;
+        }
+        else if (jabatan === "asisten manajer"){
+            gajiPokok = 10000000;
+        }
+        else if (jabatan === "staff"){
+            gajiPokok = 5000000;
+        }
+        else{
+            gajiPokok = 0;
+        }
+
+        let tunjanganJabatan = 0.15 * gajiPokok;
+        let bpjs = 0.10 * gajiPokok;
+        let tunjanganKeluarga = (status === "menikah") ? 0.20 * gajiPokok : 0;
+        let totalGaji = gajiPokok + tunjanganJabatan + bpjs + tunjanganKeluarga;
+       
+
+       document.getElementById("output").innerHTML = `
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Nama Pegawai</th>
+                    <th>Umur</th>
+                    <th>Jabatan</th>
+                    <th>Status</th>
+                    <th>Gaji Pokok</th>
+                    <th>Tunjangan Jabatan</th>
+                    <th>BPJS</th>
+                    <th>Tunjangan Keluarga</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>${namaPegawai}</td>
+                    <td>${umur}</td>
+                    <td>${jabatan}</td>
+                    <td>${status}</td>
+                    <td>Rp. ${gajiPokok.toLocaleString()}</td>
+                    <td>Rp. ${tunjanganJabatan.toLocaleString()}</td>
+                    <td>Rp. ${bpjs.toLocaleString()}</td>
+                    <td>Rp. ${tunjanganKeluarga.toLocaleString()}</td> 
+                </tr>
+            </tbody>
+            
+            <tfoot>
+                <tr>
+                    <td colspan = "7">Total Gaji</td>
+                    <td>Rp. ${totalGaji.toLocaleString()}</td>
+                </tr>
+            </tfoot>
+        </table>
+       `;
+       }
+    </script>
+</body>
+</html>
