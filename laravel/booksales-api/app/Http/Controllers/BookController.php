@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class BookController extends Controller
@@ -71,4 +72,98 @@ class BookController extends Controller
         ], 201);
     }
 
+    public function show(string $id){
+        $book = Book::find($id);
+
+        if(!$book){
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Get resource',
+            'data' => $book
+        ], 200);
+    }
+
+    public function update(string $id, Request $request){
+        // 1. find data
+        $book = Book::find($id);
+
+        if(!$book){
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+            ], 404);
+        }
+
+        // 2. validation
+        $validator = Validator::make(request()->all(), [
+            'title' => 'required',
+            'description' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'genre_id' => 'required|integer',
+            'author_id' => 'required|integer',
+        ]);
+
+        // 3. update data
+        $data = [  
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'genre_id' => $request->genre_id,
+            'author_id' => $request->author_id,
+        ];
+
+        // 4. handle image upload
+        if($request->hasFile('cover_photo')){
+            $image = $request->file('cover_photo');
+            $image ->store('books','public');
+
+            // delete old image
+            if($book->cover_photo){
+                Storage::disk('public')->delete('books/' . $book->cover_photo);
+            }
+
+            $data['cover_photo'] = $image->hashName();
+        }
+
+        // 7. return response to database
+        $book->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource updated successfully',
+            'data' => $book
+        ], 200);
+    }
+
+    public function destroy(string $id){
+        $book = Book::find($id);
+
+        if(!$book){
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+            ], 404);
+        }
+
+        // delete cover photo
+        if ($book->cover_photo) {
+            Storage::disk('public')->delete('books/' . $book->cover_photo);
+        }
+
+        $book->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource deleted successfully',
+        ], 200);
+    }
 }
