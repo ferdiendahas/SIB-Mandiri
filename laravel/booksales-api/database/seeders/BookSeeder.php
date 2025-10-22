@@ -39,7 +39,7 @@ class BookSeeder extends Seeder
             'price' => 90000,
             'stock' => 10,
             'cover_photo' => 'rindu.jpg',
-            'genre_id' => 4,
+            'genre_id' => 3,
             'author_id' => 3,
         ]);
 

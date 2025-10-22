@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Validator;
 class BookController extends Controller
 {
     public function index(){
-        // $data = new Book();
-        // $books = $data->getBooks();
-        $books = Book::all();
+        $books = Book::with('author', 'genre')->get();
         
         if($books->isEmpty()){
             return response()->json([
