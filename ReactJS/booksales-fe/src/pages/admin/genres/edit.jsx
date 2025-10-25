@@ -1,28 +1,35 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createGenre } from "../../../_services/genres";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { showGenre, updateGenre } from "../../../_services/genres";
 
-export default function GenreCreate() {
+export default function GenreEdit() {
+    const {id} = useParams()
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         name: "",
         description: "",
+        _method: "PUT",
     });
 
-    const navigate = useNavigate();
+    useEffect (() => {
+            const fetchData = async () => {
+                const [genreData] = await showGenre(id)
+    
+                setFormData({
+                    name: genreData.name,
+                    description: genreData.description,
+                    _method: "PUT",
+                });
+            }
+            
+            fetchData();
+        }, [id]);
 
     const handleChange = (e) => {
-        const {name, value, files} = e.target;
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
-        if(name === "photo"){
-            setFormData({
-                ...formData, photo: files[0],
-            });
-        } else {
-            setFormData({
-                ...formData, [name]: value,
-            });
-        }
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,12 +40,12 @@ export default function GenreCreate() {
                 payload.append(key, formData[key]);
 
             }
-            await createGenre(payload);
+            await updateGenre(id, payload);
             navigate("/admin/genres");
                 
         } catch (error) {
             console.log(error);
-            alert("Error creating genre");
+            alert("Error update genre");
         }
     }
 
@@ -47,7 +54,7 @@ export default function GenreCreate() {
       <section className="bg-white dark:bg-gray-900">
         <div className="max-w-2xl px-4 py-8 mx-auto lg:py-16">
           <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-            Create New Genre
+            Edit Genre
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
@@ -95,13 +102,7 @@ export default function GenreCreate() {
                 type="submit"
                 className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
               >
-                Create Genre
-              </button>
-              <button
-                type="reset"
-                className="text-gray-600 inline-flex items-center hover:text-white border border-gray-600 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-gray-500 dark:text-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-900"
-              >
-                Reset
+                Edit Genre
               </button>
             </div>
           </form>
