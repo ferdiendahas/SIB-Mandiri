@@ -13,7 +13,7 @@ class AuthorController extends Controller
         // $data = new Author();
         // $authors = $data->getAuthors();
         $authors = Author::all();
-        
+
         if($authors->isEmpty()){
             return response()->json([
                 'success' => true,
@@ -25,7 +25,7 @@ class AuthorController extends Controller
             'success' => true,
             'message' => 'Get all resource',
             'data' => $authors
-        ], 200);    
+        ], 200);
     }
 
     public function store(Request $request){
@@ -38,7 +38,7 @@ class AuthorController extends Controller
 
         // 2. check if validation fails
         if($validator->fails()){
-            return response()->json([  
+            return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
                 'data' => $validator->errors()
@@ -79,7 +79,7 @@ class AuthorController extends Controller
             'message' => 'Get resource detail',
             'data' => $author
         ], 200);
-    }    
+    }
 
     public function update(string $id, Request $request){
         // 1. find data
@@ -95,12 +95,12 @@ class AuthorController extends Controller
         // 2. validation
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
-            'photo' => 'nullabe|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'bio' => 'required',
         ]);
 
         if($validator->fails()){
-            return response()->json([  
+            return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
             ], 422);
@@ -121,10 +121,10 @@ class AuthorController extends Controller
             if($author->photo){
                 Storage::disk('public')->delete('authors/' . $author->photo);
             }
-            
+
             $data['photo'] = $image->hashName();
         }
-    
+
 
         // 5. return data to database
         $author->update($data);
@@ -135,7 +135,7 @@ class AuthorController extends Controller
             'data' => $author
         ], 200);
     }
-    
+
     public function destroy(string $id){
         $author = Author::find($id);
 
@@ -159,4 +159,4 @@ class AuthorController extends Controller
         ], 200);
     }
 
-}   
+}
