@@ -40,7 +40,7 @@ function App() {
                 <Route path="register" element ={<Register/>}/>
 
                 // admin
-                <Route path="admin" element = {<AdminLayout/>}>
+                <Route path="/admin/*" element = {<AdminLayout/>}>
                     <Route index element ={<Dashboard/>}/>
 
                     <Route path="authors">
