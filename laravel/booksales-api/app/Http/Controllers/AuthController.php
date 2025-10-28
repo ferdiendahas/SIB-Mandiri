@@ -26,10 +26,11 @@ class AuthController extends Controller
 
         // 3.create user
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        'name' => "{$request->fullname} ({$request->username})",
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'role' => 'customer',
+         ]);
 
         // 4.check success
         if($user){
@@ -102,5 +103,5 @@ class AuthController extends Controller
 
     }
 
-    
+
 }
