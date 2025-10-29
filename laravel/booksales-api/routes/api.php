@@ -13,23 +13,44 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::apiResource('/genres', GenreController::class)->only(['index', 'show']);
-Route::apiResource('/authors', AuthorController::class)->only(['index', 'show']);
-Route::apiResource('/books', BookController::class)->only(['index', 'show']);
-
-
-Route::middleware('auth:api')->group(function () {
-    Route::apiResource('/transactions', TransactionController::class)->only(['store', 'update', 'show']);
-
-    Route::middleware(['role:admin'])->group(function () {
-        Route::apiResource('/transactions', TransactionController::class)->only(['index', 'destroy']);
-    });
-});
-
-Route::apiResource('/genres', GenreController::class)->only(['store', 'update', 'destroy']);
-Route::apiResource('/authors', AuthorController::class)->only(['store', 'update', 'destroy']);
-Route::apiResource('/books', BookController::class)->only(['store', 'update', 'destroy']);
+Route::get('/genres', [GenreController::class, 'index']);
+Route::get('/genres/{id}', [GenreController::class, 'show']);
+Route::get('/authors', [AuthorController::class, 'index']);
+Route::get('/authors/{id}', [AuthorController::class, 'show']);
+Route::get('/books', [BookController::class, 'index']);
+Route::get('/books/{id}', [BookController::class, 'show']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::get('/transactions/{id}', [TransactionController::class, 'show']);
+
+    Route::middleware(['role:admin'])->group(function () {
+        //transactions
+        Route::get('/transactions', [TransactionController::class, 'index']);
+        Route::put('/transactions/{id}', [TransactionController::class, 'update']);
+        Route::delete('/transactions/{id}', [TransactionController::class, 'destroy']);
+
+        //books
+        Route::post('/books', [BookController::class, 'store']);
+        Route::put('/books/{id}', [BookController::class, 'update']);
+        Route::delete('/books/{id}', [BookController::class, 'destroy']);
+
+        //genres
+        Route::post('/genres', [GenreController::class, 'store']);
+        Route::put('/genres/{id}', [GenreController::class, 'update']);
+        Route::delete('/genres/{id}', [GenreController::class, 'destroy']);
+
+        //authors
+        Route::post('/authors', [AuthorController::class, 'store']);
+        Route::put('/authors/{id}', [AuthorController::class, 'update']);
+        Route::delete('/authors/{id}', [AuthorController::class, 'destroy']);
+    });
+});
+
+
+
